@@ -15,7 +15,7 @@ intents.message_content = True       # Botun mesaj içeriğini okumasına izin v
 intents.guilds = True                # Botun sunucularla (loncalar) çalışmasına izin verme
 
 # Tanımlanmış bir komut önekine ve etkinleştirilmiş amaçlara sahip bir bot oluşturma
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 # Bot çalışmaya hazır olduğunda tetiklenen bir olay
 @bot.event
