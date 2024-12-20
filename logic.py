@@ -4,7 +4,7 @@ import random
 class Pokemon:
     pokemons = {}
     # Nesne başlatma (kurucu)
-    def __init__(self, pokemon_trainer):
+    def __init__(self, pokemon_trainer,):
         self.pokemon_trainer = pokemon_trainer
         self.pokemon_number = random.randint(1, 1000)
         self.name = None
