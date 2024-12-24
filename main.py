@@ -3,6 +3,9 @@ from discord.ext import commands
 from config import token
 from logic import Pokemon
 import logging
+import random
+from logic import Wizard
+from logic import Fighter
 
 
 logging.basicConfig(level=logging.INFO, filename="bot.log", filemode="a", format="%(asctime)s - %(message)s")
@@ -42,6 +45,14 @@ async def on_command_error(ctx, error):
 async def go(ctx):
     author = ctx.author.name  
     if author not in Pokemon.pokemons:
+        chance = random.randint(1, 3)  # 1 ile 3 arasında rastgele bir sayı oluştururuz
+        # Rastgele sayıya göre bir Pokémon nesnesi oluştururuz
+        if chance == 1:
+            pokemon = Pokemon(author)  # Standart bir Pokémon oluştururuz
+        elif chance == 2:
+            pokemon = Wizard(author)  # Wizard türünde bir Pokémon oluştururuz
+        elif chance == 3:
+            pokemon = Fighter(author)  # Fighter türünde bir Pokémon oluştururuz
         pokemon = Pokemon(author)  
         await ctx.send(await pokemon.info())  
         image_url = await pokemon.show_img()  
@@ -132,5 +143,20 @@ async def help(ctx):
     """
     await ctx.send(help_message)
 
+
+@bot.command()
+async def attack(ctx):
+    target = ctx.message.mentions[0] if ctx.message.mentions else None  # Mesajda belirtilen kullanıcıyı alırız
+    if target:  # Kullanıcının belirtilip belirtilmediğini kontrol ederiz
+        # Hem saldırganın hem de hedefin Pokémon sahibi olup olmadığını kontrol ederiz
+        if target.name in Pokemon.pokemons and ctx.author.name in Pokemon.pokemons:
+            enemy = Pokemon.pokemons[target.name]  # Hedefin Pokémon'unu alırız
+            attacker = Pokemon.pokemons[ctx.author.name]  # Saldırganın Pokémon'unu alırız
+            result = await attacker.attack(enemy)  # Saldırıyı gerçekleştirir ve sonucu alırız
+            await ctx.send(result)  # Saldırı sonucunu göndeririz
+        else:
+            await ctx.send("Savaş için her iki tarafın da Pokémon'a sahip olması gerekir!")  # Katılımcılardan birinin Pokémon'u yoksa bilgilendiririz
+    else:
+        await ctx.send("Saldırmak istediğiniz kullanıcıyı etiketleyerek belirtin.")  # Saldırmak için kullanıcıyı etiketleyerek belirtmesini isteriz
 
 bot.run(token)

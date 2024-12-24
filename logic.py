@@ -52,11 +52,12 @@ class Pokemon:
         return f"{self.name} (Seviye {self.level})"
     
     async def attack(self, enemy):
-        if isinstance(enemy, Wizard):  # Enemy'nin bir Wizard veri tipi olduğunu (Büyücü sınıfının bir örneği olduğunu) kontrol etme
-            şans = random.randint(1, 5) 
-        if şans == 1:
-            return "Sihirbaz Pokémon, savaşta bir kalkan kullanıldı!"
-        
+       
+        if isinstance(enemy, Wizard):
+            chance = random.randint(1, 5)
+            if chance == 1:
+                return "Sihirbaz Pokémon, savaşta bir kalkan kullandı!"     
+                
         if enemy.hp > self.power:
             enemy.hp -= self.power
             return f"Pokémon eğitmeni @{self.pokemon_trainer}, @{enemy.pokemon_trainer}'ne saldırdı\n@{enemy.pokemon_trainer}'nin sağlık durumu şimdi {enemy.hp}"
@@ -65,15 +66,37 @@ class Pokemon:
             return f"Pokémon eğitmeni @{self.pokemon_trainer}, @{enemy.pokemon_trainer}'ni yendi!"
 
 class Wizard(Pokemon):
-    async def attack(self, enemy):
-        return await super().attack(enemy)
+    pass
 
 class Fighter(Pokemon):
-    async def attack(self, enemy):
-        süper_güç = random.randint(5, 15) 
-        self.güç += süper_güç
-        sonuç = await super().attack(enemy)
-        self.güç -= süper_güç
-        return sonuç + f"\nDövüşçü Pokémon süper saldırı kullandı. Eklenen güç: {süper_güç}"
+     async def attack(self, enemy):
+        super_power = random.randint(5, 15)
+        self.power += super_power
+        result = await super().attack(enemy)
+        self.power -= super_power
+        return result + f"\nDovuscu Pokémon süper saldırı kullandı. Eklenen guc: {super_power}"
 
-    
+import asyncio
+
+async def main():
+    wizard = Wizard("username1")
+    fighter = Fighter("username2")
+
+    # Pokémon bilgilerini göster
+    wizard_info = await wizard.info()
+    fighter_info = await fighter.info()
+    print(wizard_info)
+    print("#" * 10)
+    print(fighter_info)
+    print("#" * 10)
+
+    # Saldırı senaryosu
+    attack_result1 = await wizard.attack(fighter)
+    attack_result2 = await fighter.attack(wizard)
+
+    print(attack_result1)
+    print(attack_result2)
+
+# asyncio döngüsü ile çalıştır
+asyncio.run(main())
+  
