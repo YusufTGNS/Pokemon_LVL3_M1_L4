@@ -4,10 +4,12 @@ import random
 class Pokemon:
     pokemons = {}
 
-    def __init__(self, pokemon_trainer, level=1):
+    def __init__(self, pokemon_trainer, level=1,):
         self.pokemon_trainer = pokemon_trainer
         self.pokemon_number = random.randint(1, 1000)
         self.name = None
+        self.power = random.randint(30,60)
+        self.hp = random.randint(100,200)
         self.level = level
         if pokemon_trainer not in Pokemon.pokemons:
             Pokemon.pokemons[pokemon_trainer] = self
@@ -27,7 +29,7 @@ class Pokemon:
     async def info(self):
         if not self.name:
             self.name = await self.get_name()
-        return f"Pokémonunuzun ismi: {self.name} - Seviye: {self.level}"
+        return f"Pokémonunuzun ismi: {self.name} - Seviye: {self.level} - Sağlık : {self.hp} - Saldırı Gücü: {self.power}"
 
     async def show_img(self):
         url = f'https://pokeapi.co/api/v2/pokemon/{self.pokemon_number}'
@@ -48,3 +50,30 @@ class Pokemon:
     def __str__(self):
         """Pokémon hakkında genel bilgi döndürür."""
         return f"{self.name} (Seviye {self.level})"
+    
+    async def attack(self, enemy):
+        if isinstance(enemy, Wizard):  # Enemy'nin bir Wizard veri tipi olduğunu (Büyücü sınıfının bir örneği olduğunu) kontrol etme
+            şans = random.randint(1, 5) 
+        if şans == 1:
+            return "Sihirbaz Pokémon, savaşta bir kalkan kullanıldı!"
+        
+        if enemy.hp > self.power:
+            enemy.hp -= self.power
+            return f"Pokémon eğitmeni @{self.pokemon_trainer}, @{enemy.pokemon_trainer}'ne saldırdı\n@{enemy.pokemon_trainer}'nin sağlık durumu şimdi {enemy.hp}"
+        else:
+            enemy.hp = 0
+            return f"Pokémon eğitmeni @{self.pokemon_trainer}, @{enemy.pokemon_trainer}'ni yendi!"
+
+class Wizard(Pokemon):
+    async def attack(self, enemy):
+        return await super().attack(enemy)
+
+class Fighter(Pokemon):
+    async def attack(self, enemy):
+        süper_güç = random.randint(5, 15) 
+        self.güç += süper_güç
+        sonuç = await super().attack(enemy)
+        self.güç -= süper_güç
+        return sonuç + f"\nDövüşçü Pokémon süper saldırı kullandı. Eklenen güç: {süper_güç}"
+
+    

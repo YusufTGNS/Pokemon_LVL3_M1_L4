@@ -85,6 +85,8 @@ async def info(ctx):
         )
         embed.add_field(name="Adı", value=pokemon.name, inline=False)
         embed.add_field(name="Seviye", value=str(pokemon.level), inline=False)
+        embed.add_field(name="Sağlık", value=str(pokemon.hp), inline=False)
+        embed.add_field(name="Güç", value=str(pokemon.power), inline=False)
         if image_url:
             embed.set_image(url=image_url)  
         embed.set_footer(text="Pokémon Bilgisi")
