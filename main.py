@@ -6,7 +6,10 @@ import logging
 import random
 from logic import Wizard
 from logic import Fighter
+from datetime import datetime, timedelta
 
+# Datetime nesnesini oluşturma
+now = datetime.now()
 
 logging.basicConfig(level=logging.INFO, filename="bot.log", filemode="a", format="%(asctime)s - %(message)s")
 logger = logging.getLogger()
@@ -72,7 +75,7 @@ async def go(ctx):
 
 # '!level_up' komutu
 @bot.command()
-@commands.cooldown(1, 120, commands.BucketType.user)  
+@commands.cooldown(1, 120, commands.BucketType.user)
 async def level_up(ctx):
     author = ctx.author.name
     if author in Pokemon.pokemons:
@@ -159,4 +162,14 @@ async def attack(ctx):
     else:
         await ctx.send("Saldırmak istediğiniz kullanıcıyı etiketleyerek belirtin.")  # Saldırmak için kullanıcıyı etiketleyerek belirtmesini isteriz
 
+@bot.command()
+async def feed(ctx):
+    author = ctx.author.name
+    if author in Pokemon.pokemons:
+        pokemon = Pokemon.pokemons[author]
+        response = await pokemon.feed()
+        await ctx.send(response)
+    else:
+        await ctx.send("Pokémon'un yok!")
+    
 bot.run(token)

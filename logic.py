@@ -1,6 +1,6 @@
 import aiohttp
 import random
-
+from datetime import datetime, timedelta
 class Pokemon:
     pokemons = {}
 
@@ -14,7 +14,17 @@ class Pokemon:
         if pokemon_trainer not in Pokemon.pokemons:
             Pokemon.pokemons[pokemon_trainer] = self
         # `else` bloğuna gerek yok çünkü nesne zaten kaydedilmiş oluyor
-
+        
+    async def feed(self, feed_interval=20, hp_increase=10):
+        current_time = datetime.now()
+        delta_time = timedelta(seconds=feed_interval)
+        if (current_time - self.last_feed_time) > delta_time:
+            self.hp += hp_increase
+            self.last_feed_time = current_time
+            return f"Pokémon'un sağlığı geri yüklenir. Mevcut sağlık: {self.hp}"
+        else:
+            return f"Pokémonunuzu şu zaman besleyebilirsiniz: {current_time+delta_time}"
+        
     async def get_name(self):
         # PokeAPI aracılığıyla bir pokémonun adını almak için eşzamansız bir yöntem
         url = f'https://pokeapi.co/api/v2/pokemon/{self.pokemon_number}'
@@ -66,9 +76,14 @@ class Pokemon:
             return f"Pokémon eğitmeni @{self.pokemon_trainer}, @{enemy.pokemon_trainer}'ni yendi!"
 
 class Wizard(Pokemon):
-    pass
-
+    def feed(self):
+        return super().feed(feed_interval=20, hp_increase=15)
+        
+    
 class Fighter(Pokemon):
+     def feed(self):
+         return super().feed(feed_interval=15, hp_increase=20)
+     
      async def attack(self, enemy):
         super_power = random.randint(5, 15)
         self.power += super_power
